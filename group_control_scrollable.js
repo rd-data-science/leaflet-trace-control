@@ -1,6 +1,6 @@
 // il faut etendre groupLayer pour avoir un control dessus
 
-L.LayerGroup.Essai = L.LayerGroup.extend({
+L.LayerGroup.Trace = L.LayerGroup.extend({
     options: {
         name: 'unnamed'
     },
@@ -8,7 +8,7 @@ L.LayerGroup.Essai = L.LayerGroup.extend({
     initialize: function(options) {
         L.LayerGroup.prototype.initialize.call(this);
         L.setOptions(this, options);
-        this._control = L.control.layers.essaiControl(this);
+        this._control = L.control.layers.traceControl(this);
     },
     //quand le group est affiche, on doit afficher le control
     onAdd: function(map) {
@@ -23,15 +23,15 @@ L.LayerGroup.Essai = L.LayerGroup.extend({
     }
 });
 
-L.layerGroup.essai = function(opts) {
-    return new L.LayerGroup.Essai(opts);
+L.layerGroup.trace = function(opts) {
+    return new L.LayerGroup.Trace(opts);
 }
 
 // Ce control permet d'afficher la liste des elements du groupe.
 // Quand on passe la souris sur un element, un cadre apparaît pour le
 // mettre en valeur.
 
-L.Control.Layers.EssaiControl = L.Control.Layers.extend({
+L.Control.Layers.TraceControl = L.Control.Layers.extend({
 
     initialize: function(layerGroup){
         this.layerGroup = layerGroup;
@@ -82,6 +82,6 @@ L.Control.Layers.EssaiControl = L.Control.Layers.extend({
     }
 });
 
-L.control.layers.essaiControl = function(layerGroup) {
-    return new L.Control.Layers.EssaiControl(layerGroup);
+L.control.layers.traceControl = function(layerGroup) {
+    return new L.Control.Layers.TraceControl(layerGroup);
 }
