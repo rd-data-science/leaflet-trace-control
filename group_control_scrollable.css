@@ -1,0 +1,19 @@
+.selected_outline{ outline: 5px solid;}
+.hoverTable {
+  width: 100%;
+  font: 12px/1.5 "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+.hoverTable tr:hover {
+  background-color: #ffff99;
+}
+.traceControlToggle {
+  /*background-image: none;*/
+  margin: 5px;
+  /*height: 15px;*/
+  display: block;
+  color: #FFFFFF;
+  text-decoration: none;
+}
+.hiddenOverflowX {
+  overflow-x: hidden;
+}
