@@ -1,3 +1,15 @@
+// NOTE: supprimer L.LayerGroup.Trace et ajouter des listeners sur le layer
+// associer au L.Control.Layers.traceControl.
+// Des lors quand le layer est ajouter on montre le control, sinon on 
+// l'enleve. Ce sera plus propore en gardant le meme comportement et on ne
+// sera plus oblige de differencier dans le code generate_trace_control si
+// il y a layer ou pas
+//
+// NOTE2: Ajouter un listener sur le contenu du layer pour que même si on
+// ajoute le control avant les composants du groupe, il se mette a jour
+// quand meme ?
+
+
 // il faut etendre groupLayer pour avoir un control dessus
 
 L.LayerGroup.Trace = L.LayerGroup.extend({
@@ -7,8 +19,10 @@ L.LayerGroup.Trace = L.LayerGroup.extend({
     //quand le group est cree on doit creer un control
     initialize: function(options) {
         L.LayerGroup.prototype.initialize.call(this);
+        //this.on('layeradd', function(){console.log('iciii');});
         L.setOptions(this, options);
         this._control = L.control.layers.traceControl(this);
+        //this._control.addTo(map);
     },
     //quand le group est affiche, on doit afficher le control
     onAdd: function(map) {
@@ -52,11 +66,24 @@ L.Control.Layers.TraceControl = L.Control.Layers.extend({
         //remplissage du control
         var table = L.DomUtil.create('table', 'hoverTable', this._form);
         L.DomUtil.addClass(this._form, 'hiddenOverflowX');
+        //this.on('layeradd', function(){console.log('bl');});
+        //console.log(this);
+        //for (let layer of this.layerGroup.getLayers()){
+        //layer.addEventParent(this);
+        //    console.log('la');
+        //    console.log(layer);
+        //    layer.on('overlayadd', function(){console.log('par la');});
+        //}
         this.layerGroup.eachLayer(function (layer) {
+            //layer.on('layerremove', function(){console.log('bl');});
+            //console.log(this);
+            //layer.addEventParent(this);
+            //console.log(layer);
             var tr = L.DomUtil.create('tr', null, table);
             var td = L.DomUtil.create('td', null, tr);
             //c'est pas beau mais on utilise une option label inutilisee
             //pour chaque layer A CHANGER
+            //console.log(layer.options.label);
             if (layer.options.label) {
                 td.innerText = layer.options.label;
             } else {
@@ -64,23 +91,47 @@ L.Control.Layers.TraceControl = L.Control.Layers.extend({
             }
             //td.innerHTML = "blop";
             //gestion des events
-            var classList = null;
-            if (layer instanceof L.Path) {
-                classList = layer._path.classList;
-            } else if (layer instanceof L.Marker) {
-                classList = layer._icon.classList;
-            }
-            if (classList) {
-                tr.onmouseover = function() {
+            tr.onmouseover = function() {
+                for (let classList of _selectOutline(layer)) {
                     classList.add('selected_outline');
                 }
-                tr.onmouseout = function() {
+            }
+            tr.onmouseout = function() {
+                for (let classList of _selectOutline(layer)) {
                     classList.remove('selected_outline');
                 }
             }
         });
     }
+
 });
+
+function* _selectOutline(layer) {
+    var classList = null;
+    if (layer instanceof L.Path) {
+        if (layer._path != null) {
+            yield layer._path.classList;
+        }
+    } else if (layer instanceof L.Marker) {
+        if (layer._icon != null) {
+            yield layer._icon.classList;
+        }
+    } else if (layer instanceof L.LayerGroup) {
+        for (let lay of layer.getLayers()) {
+            yield* _selectOutline(lay);
+        }
+    }
+}
+
+function* _iterateLayers(layer) {
+    if (layer instanceof L.LayerGroup) {
+        for (let lay of layer.getLayers()) {
+            yield* _iterateLayers(lay);
+        }
+    } else {
+        yield layer;
+    }
+}
 
 L.control.layers.traceControl = function(layerGroup) {
     return new L.Control.Layers.TraceControl(layerGroup);
