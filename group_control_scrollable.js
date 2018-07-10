@@ -47,9 +47,10 @@ L.layerGroup.trace = function(opts) {
 
 L.Control.Layers.TraceControl = L.Control.Layers.extend({
 
-    initialize: function(layerGroup){
+    initialize: function(layerGroup, options){
         this.layerGroup = layerGroup;
         L.Control.Layers.prototype.initialize.call(this);
+        L.setOptions(this, options);
     },
 
     onAdd: function(map) {
@@ -133,6 +134,6 @@ function* _iterateLayers(layer) {
     }
 }
 
-L.control.layers.traceControl = function(layerGroup) {
-    return new L.Control.Layers.TraceControl(layerGroup);
+L.control.layers.traceControl = function(layerGroup, options) {
+    return new L.Control.Layers.TraceControl(layerGroup, options);
 }
