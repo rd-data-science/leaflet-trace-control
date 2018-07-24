@@ -14,14 +14,15 @@
 
 L.LayerGroup.Trace = L.LayerGroup.extend({
     options: {
-        name: 'unnamed'
+        name: 'unnamed',
+        collapsed: true,
     },
     //quand le group est cree on doit creer un control
     initialize: function(options) {
         L.LayerGroup.prototype.initialize.call(this);
         //this.on('layeradd', function(){console.log('iciii');});
         L.setOptions(this, options);
-        this._control = L.control.layers.traceControl(this);
+        this._control = L.control.layers.traceControl(this, this.options);
         //this._control.addTo(map);
     },
     //quand le group est affiche, on doit afficher le control
